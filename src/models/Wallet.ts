@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IWallet } from '../interfaces/Wallet.interface';
+import { IWallet } from '../interfaces/modelsInterfaces/Wallet.interface';
 
 const walletSchema = new Schema<IWallet>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },

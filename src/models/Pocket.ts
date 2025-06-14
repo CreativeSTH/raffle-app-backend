@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IPocket } from '../interfaces/Pocket.interface';
+import { IPocket } from '../interfaces/modelsInterfaces/Pocket.interface';
 
 const pocketSchema = new Schema<IPocket>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },

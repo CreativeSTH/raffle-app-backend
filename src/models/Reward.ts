@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IReward } from '../interfaces/Reward.interface';
+import { IReward } from '../interfaces/modelsInterfaces/Reward.interface';
 
 const rewardSchema = new Schema<IReward>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },

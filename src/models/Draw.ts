@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IDraw } from '../interfaces/Draw.interface';
+import { IDraw } from '../interfaces/modelsInterfaces/Draw.interface';
 
 const drawSchema = new Schema<IDraw>({
   lotteryId: { type: Schema.Types.ObjectId, ref: 'Lottery', required: true },

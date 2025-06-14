@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { ILottery } from '../interfaces/Lottery.interface';
+import { ILottery } from '../interfaces/modelsInterfaces/Lottery.interface';
 
 const lotterySchema = new Schema<ILottery>({
   name: { type: String, required: true, unique: true },

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import Wallet from '../models/Wallet';
 import Pocket from '../models/Pocket';
@@ -7,6 +7,7 @@ import Referral from '../models/Referral';
 import { sendEmail } from '../services/emailSender';
 import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML} from '../utils/emailTemplates'
 import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword } from '../utils/helpers';
+import { AppError } from '../utils/AppError'
 
 
 // Registrar Usuario
@@ -16,13 +17,13 @@ export const register = async (req: Request, res: Response) => {
 
     // 1. Validación de campos obligatorios
     if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+      throw new AppError('Todos los campos son obligatorios', 400);
     }
 
     // 2. Verificar si el email ya está registrado
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: 'El correo ya está registrado' });
+      throw new AppError('El correo ya está registrado', 409);
     }
 
     // 3. Hashear contraseña
@@ -77,7 +78,7 @@ export const register = async (req: Request, res: Response) => {
     res.status(201).json({ message: 'Usuario registrado. Verifica tu correo electrónico.' });
   } catch (error) {
     console.error('Error en register:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    throw new AppError('Error interno del servidor', 500);
   }
 };
 
@@ -86,19 +87,19 @@ export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.query;
     if (typeof token !== 'string') {
-      return res.status(400).json({ message: 'Token inválido' });
+      throw new AppError('Token inválido', 400);
     }
 
     // 1. Buscar el token
     const record = await VerificationToken.findOne({ token });
     if (!record) {
-      return res.status(404).json({ message: 'Token no encontrado o ya expirado' });
+      throw new AppError('Token no encontrado o ya expirado', 404);
     }
 
     // 2. Verificar expiración
     if (record.expiresAt < new Date()) {
       await VerificationToken.deleteOne({ _id: record._id });
-      return res.status(410).json({ message: 'Token expirado, solicita uno nuevo' });
+      throw new AppError('Token expirado, solicita uno nuevo', 410);
     }
 
     // 3. Marcar el usuario como verificado
@@ -107,7 +108,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     // 4. Obtener el email del usuario
     const user = await User.findById(record.userId);
     if (!user) {
-      return res.status(500).json({ message: 'Usuario no encontrado tras verificación' });
+      throw new AppError('Usuario no encontrado tras verificación', 500);
     }
 
     // 5. Enviar correo de confirmación
@@ -128,36 +129,36 @@ export const verifyEmail = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error en verifyEmail:', error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    throw new AppError('Error interno del servidor', 500);
   }
 };
 
 // Iniciar Sesion
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
     // 1. Validar campos
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email y contraseña son obligatorios' });
+      throw new AppError('Email y contraseña son obligatorios', 400);
     }
 
     // 2. Buscar usuario
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
+      throw new AppError('Credenciales inválidas', 401);
     }
 
     // 3. Verificar que haya confirmado su email
     if (!user.isEmailVerified) {
-      return res.status(403).json({ message: 'Debes verificar tu correo antes de iniciar sesión' });
+      throw new AppError('Debes verificar tu correo antes de iniciar sesión', 403);
     }
 
     // 4. Comparar contraseña
-    const passwordMatch = comparePassword(password, user.password)
+    const passwordMatch = await comparePassword(password, user.password)
     
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
+      throw new AppError('Credenciales inválidas', 401);
     }
 
     // 5. Generar JWT
@@ -176,6 +177,6 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error en login:', error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    return next(error);
   }
 };

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IReferral } from '../interfaces/Referral.interface';
+import { IReferral } from '../interfaces/modelsInterfaces/Referral.interface';
 
 const referralSchema = new Schema<IReferral>({
   referredBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },

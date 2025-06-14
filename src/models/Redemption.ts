@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IRedemption } from '../interfaces/Redemption.interface';
+import { IRedemption } from '../interfaces/modelsInterfaces/Redemption.interface';
 
 const redemptionSchema = new Schema<IRedemption>(
   {

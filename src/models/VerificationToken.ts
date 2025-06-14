@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IVerificationToken } from '../interfaces/Verification-token.interface';
+import { IVerificationToken } from '../interfaces/modelsInterfaces/Verification-token.interface';
 
 const verificationTokenSchema = new Schema<IVerificationToken>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },

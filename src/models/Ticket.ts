@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { ITicket } from '../interfaces/Ticket.interface';
+import { ITicket } from '../interfaces/modelsInterfaces/Ticket.interface';
 
 const ticketSchema = new Schema<ITicket>({
   raffleId: { type: Schema.Types.ObjectId, ref: 'Raffle', required: true },

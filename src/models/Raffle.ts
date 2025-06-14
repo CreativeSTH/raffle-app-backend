@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IRaffle } from '../interfaces/Raffle.interface';
+import { IRaffle } from '../interfaces/modelsInterfaces/Raffle.interface';
 
 const raffleSchema = new Schema<IRaffle>(
   {
