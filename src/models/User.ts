@@ -10,6 +10,7 @@ const userSchema = new Schema<IUser>(
     referralCode: { type: String, unique: true },
     referredBy: { type: String },
     isEmailVerified: { type: Boolean, default: false },
+    isOTPEnabled: { type: Boolean, default: false },
     companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
   },
   { timestamps: true }

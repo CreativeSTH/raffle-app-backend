@@ -4,16 +4,25 @@ import Wallet from '../models/Wallet';
 import Pocket from '../models/Pocket';
 import VerificationToken from '../models/VerificationToken';
 import Referral from '../models/Referral';
+import OtpModel from '../models/Otp';
 import { sendEmail } from '../services/emailSender';
-import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML} from '../utils/emailTemplates'
+import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML, otpCodeEmailHTML} from '../utils/emailTemplates'
 import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword } from '../utils/helpers';
+import { generateOtp } from '../utils/generateOTP'
 import { AppError } from '../utils/AppError'
+import { validateRecaptcha } from '../utils/validateRecaptcha';
 
 
 // Registrar Usuario
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, referredBy } = req.body;
+
+    // Validar reCAPTCHA
+    // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
+    // const recaptcha = await validateRecaptcha(recaptchaToken, 'register');
+    // if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
+
 
     // 1. Validación de campos obligatorios
     if (!name || !email || !password) {
@@ -137,6 +146,11 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
+   
+    //Validación token reCHAPTCHA
+    // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
+    // const recaptcha = await validateRecaptcha(recaptchaToken, 'login');
+    // if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
 
     // 1. Validar campos
     if (!email || !password) {
@@ -179,4 +193,90 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     console.error('Error en login:', error);
     return next(error);
   }
+};
+
+export const requestOtp = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+
+    //Validar reCAPTCHA
+    // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
+    // const recaptcha = await validateRecaptcha(recaptchaToken, 'request_otp');
+    // if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
+
+    const user = await User.findOne({ email });
+    if (!user || !user.isEmailVerified || !user.isOTPEnabled) {
+      throw new AppError('Usuario no elegible para login por OTP', 400);
+    }
+
+    const otp = generateOtp(); // genera un código de 6 dígitos
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
+
+    await OtpModel.findOneAndUpdate(
+      { userId: user._id },
+      { code: otp, expiresAt },
+      { upsert: true, new: true }
+    );
+
+    const subject = "Código único de inicio de sesión 🎯";
+    const html = otpCodeEmailHTML(otp);
+    await sendEmail({to: user.email, subject, html,}); 
+    res.status(200).json({ message: 'OTP enviado al correo' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const verifyOtpLogin = async (req: Request, res: Response) => {
+  const { email, code, recaptchaToken } = req.body;
+
+  //Validar reCAPTCHA
+  if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
+  const recaptcha = await validateRecaptcha(recaptchaToken, 'verify_otp');
+  if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
+
+  // 1. Buscar el usuario por email
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError('Usuario no encontrado', 404);
+  }
+
+  // 2. Verificar si tiene el OTP login habilitado
+  if (!user.isOTPEnabled) {
+    throw new AppError('El inicio de sesión por OTP no está habilitado para este usuario', 403);
+  }
+
+  // 3. Buscar el código OTP correspondiente al usuario
+  const otpEntry = await OtpModel.findOne({ userId: user._id });
+  if (!otpEntry) {
+    throw new AppError('No se encontró un código OTP para este usuario', 404);
+  }
+
+  // 4. Verificar si el código es correcto
+  if (otpEntry.code !== code) {
+    throw new AppError('Código OTP incorrecto', 401);
+  }
+
+  // 5. Verificar si ha expirado
+  if (otpEntry.expiresAt < new Date()) {
+    throw new AppError('El código OTP ha expirado', 410);
+  }
+
+  // 6. Generar el token usando tu helper personalizado
+  const token = generateJWToken(user._id.toString());
+
+  // 7. Eliminar el OTP ya que fue usado
+  await OtpModel.deleteOne({ _id: otpEntry._id });
+
+  // 8. Responder al cliente
+  return res.status(200).json({
+    message: 'Inicio de sesión por OTP exitoso',
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
 };

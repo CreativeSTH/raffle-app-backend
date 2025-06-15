@@ -34,3 +34,21 @@ export const getConfirmationRegisterEmailHTML = () =>{
     </div>
   `;
 };
+
+export const otpCodeEmailHTML = (otp:string): string =>{
+    const loginLink = `http://localhost:4000/auth/login`;
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #333;">¡Código único de inicio de sesión!</h2>
+        <p>Has Recibido un código único de inicio de sesión:</p>
+        <div 
+           style="display: inline-block; background-color: #4CAF50; color: white; padding: 12px 24px; margin-top: 20px; text-decoration: none; border-radius: 4px;">
+          ${otp}
+        </div>
+        <p style="margin-top: 20px;">Si no haz solicitado este código alguien esta intentando ingresar a tu cuenta, puedes por seguridad desactivar esta forma de inicio de sessón</p>
+        <p style="word-break: break-all;">${loginLink}</p>
+        <hr />
+        <p style="font-size: 12px; color: #777;">Si no solicitaste este correo, simplemente ignóralo.</p>
+    </div>
+  `;
+};

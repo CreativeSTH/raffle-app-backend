@@ -9,6 +9,7 @@ export interface IUser {
   referralCode: string;
   referredBy?: string;
   isEmailVerified: boolean;
+  isOTPEnabled: boolean;
   companyId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;

@@ -35,3 +35,12 @@ export const registerSchema = z.object({
     })
     .optional(),
 });
+
+export const requestOtpSchema = z.object({
+  email: z.string().email(),
+});
+
+export const verifyOtpLoginSchema = z.object({
+  email: z.string().email({ message: 'Email inválido' }),
+  code: z.string().length(6, { message: 'El código debe tener 6 dígitos' }),
+});
