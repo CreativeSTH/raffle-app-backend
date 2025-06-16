@@ -11,6 +11,8 @@ const userSchema = new Schema<IUser>(
     referredBy: { type: String },
     isEmailVerified: { type: Boolean, default: false },
     isOTPEnabled: { type: Boolean, default: false },
+    isAuthenticatorEnabled: { type: Boolean, default: false },
+    authenticatorSecret: { type: String, default: null },
     companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
   },
   { timestamps: true }

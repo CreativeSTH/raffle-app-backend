@@ -10,6 +10,8 @@ export interface IUser {
   referredBy?: string;
   isEmailVerified: boolean;
   isOTPEnabled: boolean;
+  isAuthenticatorEnabled?: boolean;
+  authenticatorSecret?: string | null;
   companyId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
