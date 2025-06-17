@@ -177,7 +177,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     // 5. Generar JWT
     const token = generateJWToken(user._id.toString());
-
+    
     // 6. Responder con token y datos básicos
     return res.status(200).json({
       message: 'Login exitoso',
