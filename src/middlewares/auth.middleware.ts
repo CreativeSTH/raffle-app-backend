@@ -32,3 +32,23 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     throw new AppError('Invalid or expired token', 401);
   }
 };
+
+export const authTempToken = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { tempToken } = req.body;
+
+    if (!tempToken) {
+      return res.status(401).json({ message: 'Token temporal no proporcionado' });
+    }
+
+    const decoded = jwt.verify(tempToken, process.env.JWT_SECRET!) as { userId: string };
+    req.user = { id: decoded.userId }; // O lo que necesites
+
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Token temporal inválido o expirado' });
+  }
+};
+
+
+

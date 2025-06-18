@@ -7,9 +7,10 @@ import Referral from '../models/Referral';
 import OtpModel from '../models/Otp';
 import { sendEmail } from '../services/emailSender';
 import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML, otpCodeEmailHTML} from '../utils/emailTemplates'
-import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword } from '../utils/helpers';
+import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword} from '../utils/helpers';
 import { generateOtp } from '../utils/generateOTP'
 import { AppError } from '../utils/AppError'
+import jwt, { Secret } from 'jsonwebtoken';
 import { validateRecaptcha } from '../utils/validateRecaptcha';
 
 
@@ -146,39 +147,52 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-   
+
     //Validación token reCHAPTCHA
     // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
     // const recaptcha = await validateRecaptcha(recaptchaToken, 'login');
     // if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
 
-    // 1. Validar campos
+    // Validación básica
     if (!email || !password) {
       throw new AppError('Email y contraseña son obligatorios', 400);
     }
 
-    // 2. Buscar usuario
+    // Buscar usuario
     const user = await User.findOne({ email });
     if (!user) {
       throw new AppError('Credenciales inválidas', 401);
     }
 
-    // 3. Verificar que haya confirmado su email
+    // Verificar que haya confirmado su email
     if (!user.isEmailVerified) {
       throw new AppError('Debes verificar tu correo antes de iniciar sesión', 403);
     }
 
-    // 4. Comparar contraseña
-    const passwordMatch = await comparePassword(password, user.password)
-    
+    // Comparar contraseña
+    const passwordMatch = await comparePassword(password, user.password);
     if (!passwordMatch) {
       throw new AppError('Credenciales inválidas', 401);
     }
 
-    // 5. Generar JWT
+    // Si el usuario tiene habilitado 2FA con Google Authenticator
+    if (user.isAuthenticatorEnabled) {
+      // Generamos un token temporal con expiración corta (ej. 5 minutos)
+      const tempToken = jwt.sign(
+        { userId: user._id },process.env.JWT_SECRET!,{ expiresIn: '5m' }
+      );
+
+      // Le indicamos que debe completar 2FA
+      return res.status(200).json({
+        requires2FA: true,
+        tempToken,
+        message: 'Autenticación en dos pasos requerida'
+      });
+    }
+
+    // Si no tiene 2FA, login completo normal
     const token = generateJWToken(user._id.toString());
-    
-    // 6. Responder con token y datos básicos
+
     return res.status(200).json({
       message: 'Login exitoso',
       token,
@@ -194,6 +208,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return next(error);
   }
 };
+
 
 export const requestOtp = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -230,10 +245,10 @@ export const requestOtp = async (req: Request, res: Response, next: NextFunction
 export const verifyOtpLogin = async (req: Request, res: Response) => {
   const { email, code, recaptchaToken } = req.body;
 
-  //Validar reCAPTCHA
-  if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
-  const recaptcha = await validateRecaptcha(recaptchaToken, 'verify_otp');
-  if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
+  // //Validar reCAPTCHA
+  // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
+  // const recaptcha = await validateRecaptcha(recaptchaToken, 'verify_otp');
+  // if (!recaptcha.isHuman) throw new AppError('Falló la validación reCAPTCHA: ' + recaptcha.message, 403);
 
   // 1. Buscar el usuario por email
   const user = await User.findOne({ email });

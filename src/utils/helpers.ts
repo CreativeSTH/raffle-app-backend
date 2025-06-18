@@ -45,3 +45,4 @@ export const generateJWToken = (userId: string): string => {
 export const comparePassword = async (password:string, userPassword:string) => {
   return await bcrypt.compare(password, userPassword!);
 };
+
