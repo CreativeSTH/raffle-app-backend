@@ -3,7 +3,9 @@ import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import User from '../models/User';
 import { generateJWToken } from '../utils/helpers'
-import jwt, { Secret } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { sendEmail } from '../services/emailSender'
+import { googleAuthEnableEmail, googleAuthDisableEmail } from '../utils/emailTemplates'
 
 // Generar secreto y código QR
 export const generateAuthenticatorSecret = async (req: Request, res: Response) => {
@@ -39,9 +41,15 @@ export const enableAuthenticator = async (req: Request, res: Response) => {
   });
 
   if (!isVerified) return res.status(400).json({ message: 'Código inválido' });
-
+ 
+  // Activamos
   user.isAuthenticatorEnabled = true;
   await user.save();
+
+  //Enviar correo de confirmación
+  const subject = "2FA Activado Correctamente 🎯";
+  const html = googleAuthEnableEmail(user.name);
+  await sendEmail({ to: user.email, subject, html });
 
   res.json({ message: '2FA activado correctamente' });
 };
@@ -49,11 +57,18 @@ export const enableAuthenticator = async (req: Request, res: Response) => {
 // Desactivar 2FA
 export const disableAuthenticator = async (req: Request, res: Response) => {
   const userId = req.userId;
-
   await User.findByIdAndUpdate(userId, {
     isAuthenticatorEnabled: false,
     authenticatorSecret: null,
   });
+  
+  const user = await User.findById(userId);
+  if(user){
+    //Enviar correo de confirmación
+    const subject = "2FA Activado Correctamente 🎯";
+    const html = googleAuthDisableEmail(user.name);
+    await sendEmail({ to: user.email, subject, html });
+  }
 
   res.json({ message: '2FA desactivado' });
 };
@@ -70,6 +85,12 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Usuario no válido o sin 2FA configurado' });
     }
 
+    // Verificar si está bloqueado
+    if (user.lockedUntil2FA && user.lockedUntil2FA > new Date()) {
+      const remaining = Math.ceil((user.lockedUntil2FA.getTime() - Date.now()) / 60000);
+      return res.status(403).json({ message: `Demasiados intentos fallidos. Intenta de nuevo en ${remaining} minutos.` });
+    }
+
     // Verificar código TOTP
     const isValid = speakeasy.totp.verify({
       secret: user.authenticatorSecret,
@@ -79,8 +100,31 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
     });
 
     if (!isValid) {
+      user.failed2FAAttempts += 1;
+
+      // Si es el cuarto intento, mostrar advertencia
+      if (user.failed2FAAttempts === 4) {
+        await user.save();
+        return res.status(400).json({
+          message: 'Último intento antes de que tu acceso se bloquee por 15 minutos por múltiples intentos fallidos.'
+        });
+      }
+
+      if (user.failed2FAAttempts >= 5) {
+        user.lockedUntil2FA = new Date(Date.now() + 15 * 60 * 1000); // Bloqueado 15 minutos
+        await user.save();
+        return res.status(403).json({ message: 'Demasiados intentos fallidos. Usuario bloqueado temporalmente.' });
+      }
+
+      await user.save();
+
       return res.status(400).json({ message: 'Código 2FA inválido' });
     }
+
+    // Código válido: resetear intentos fallidos
+    user.failed2FAAttempts = 0;
+    user.lockedUntil2FA = null;
+    await user.save();
 
     // Generar token JWT final
     const finalToken = generateJWToken(user._id.toString());

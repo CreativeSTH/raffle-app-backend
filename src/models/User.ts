@@ -13,6 +13,8 @@ const userSchema = new Schema<IUser>(
     isOTPEnabled: { type: Boolean, default: false },
     isAuthenticatorEnabled: { type: Boolean, default: false },
     authenticatorSecret: { type: String, default: null },
+    failed2FAAttempts: {type: Number,default: 0,},
+    lockedUntil2FA: {type: Date, default: null,},
     companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
   },
   { timestamps: true }

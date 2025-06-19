@@ -52,3 +52,33 @@ export const otpCodeEmailHTML = (otp:string): string =>{
     </div>
   `;
 };
+
+export const googleAuthEnableEmail = (user: string): string => {
+    const loginLink = `http://localhost:4000/auth/login`;
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #333;">2FA Activado </h2>
+        <p>Hola ${user}:</p>
+        <p>Has activado correctamente el segundo factor de confirmación con Google Authenticator, ahora tu cuenta se encuentra más protegida</p>
+        <p style="margin-top: 20px;">Ingresa en el siguiente link para iniciar session!</p>
+        <p style="word-break: break-all;">${loginLink}</p>
+        <hr />
+        <p style="font-size: 12px; color: #777;">Si no solicitaste activar el 2FA ponte en contacto de inmediato con soporte</p>
+    </div>
+  `;
+};
+
+export const googleAuthDisableEmail = (user: string): string => {
+    const loginLink = `http://localhost:4000/auth/login`;
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #333;">2FA Desactivado </h2>
+        <p>Hola ${user}:</p>
+        <p>Has desactivado correctamente el segundo factor de confirmación con Google Authenticator, ahora podrás iniciar sesion sin el segundo factor de seguridad</p>
+        <p style="margin-top: 20px;">Ingresa en el siguiente link para iniciar session!</p>
+        <p style="word-break: break-all;">${loginLink}</p>
+        <hr />
+        <p style="font-size: 12px; color: #777;">Si no solicitaste desactivar el 2FA ponte en contacto de inmediato con soporte</p>
+    </div>
+  `;
+};

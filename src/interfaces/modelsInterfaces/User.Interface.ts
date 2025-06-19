@@ -12,6 +12,8 @@ export interface IUser {
   isOTPEnabled: boolean;
   isAuthenticatorEnabled?: boolean;
   authenticatorSecret?: string | null;
+  failed2FAAttempts: number;
+  lockedUntil2FA?: Date | null;
   companyId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
