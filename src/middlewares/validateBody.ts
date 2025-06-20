@@ -7,8 +7,8 @@ export const validateBody = (schema: ZodSchema) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      const errors = result.error.format();
-      throw new AppError('Validación fallida', 400);
+      const errorMessage = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new AppError(`Validación fallida: ${errorMessage}`, 400);
     }
 
     // Sobrescribe req.body con los datos validados

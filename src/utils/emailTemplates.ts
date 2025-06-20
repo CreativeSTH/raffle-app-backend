@@ -82,3 +82,23 @@ export const googleAuthDisableEmail = (user: string): string => {
     </div>
   `;
 };
+
+export const resetPasswordEmail = (user: string, code:string): string => {
+    const loginLink = `http://localhost:4000/auth/login`;
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #333;">2FA Desactivado </h2>
+        <p>Hola ${user}:</p>
+        <p>Solicitaste reuperar tu contraseña, tu código de recuperación es:</p>
+         <div 
+           style="display: inline-block; background-color: #4CAF50; color: white; padding: 12px 24px; margin-top: 20px; text-decoration: none; border-radius: 4px;">
+          ${code}
+        </div>
+        <p>Este código expirará en 10 minutos.</p>
+        <p style="margin-top: 20px;">Ingresa en el siguiente link para iniciar session!</p>
+        <p style="word-break: break-all;">${loginLink}</p>
+        <hr />
+        <p style="font-size: 12px; color: #777;">Si no solicitaste desactivar el 2FA ponte en contacto de inmediato con soporte</p>
+    </div>
+  `;
+};

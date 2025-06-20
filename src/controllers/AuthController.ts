@@ -6,18 +6,19 @@ import VerificationToken from '../models/VerificationToken';
 import Referral from '../models/Referral';
 import OtpModel from '../models/Otp';
 import { sendEmail } from '../services/emailSender';
-import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML, otpCodeEmailHTML} from '../utils/emailTemplates'
+import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML, otpCodeEmailHTML, resetPasswordEmail} from '../utils/emailTemplates'
 import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword} from '../utils/helpers';
 import { generateOtp } from '../utils/generateOTP'
 import { AppError } from '../utils/AppError'
-import jwt, { Secret } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import speakeasy from 'speakeasy'
 import { validateRecaptcha } from '../utils/validateRecaptcha';
 
 
 // Registrar Usuario
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, referredBy } = req.body;
+    const { name, email, password, referredBy, recaptchaToken } = req.body;
 
     // Validar reCAPTCHA
     // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
@@ -146,7 +147,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 // Iniciar Sesion
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, recaptchaToken } = req.body;
 
     //Validación token reCHAPTCHA
     // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
@@ -212,7 +213,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 export const requestOtp = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email } = req.body;
+    const { email, recaptchaToken } = req.body;
 
     //Validar reCAPTCHA
     // if (!recaptchaToken) throw new AppError('Token de reCAPTCHA no proporcionado', 400);
@@ -294,4 +295,148 @@ export const verifyOtpLogin = async (req: Request, res: Response) => {
       role: user.role,
     },
   });
+};
+
+// Forgot password
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      throw new AppError('El correo electrónico es requerido', 400);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new AppError('No existe un usuario con este correo', 404);
+    }
+
+    // --- CASO: Tiene 2FA activo ---
+    if (user.isAuthenticatorEnabled && user.authenticatorSecret) {
+      return res.status(200).json({
+        message: '2FA habilitado. Verifica con Google Authenticator.',
+        method: '2FA',
+      });
+    }
+
+    // --- CASO: No tiene 2FA, enviar código por correo ---
+    const code = Math.floor(100000 + Math.random() * 900000).toString(); // Código de 6 dígitos
+    const expiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
+
+    user.recoveryCode = code;
+    user.recoveryCodeExpires = expiration;
+    await user.save();
+
+    // Enviar correo (implementa esta función según tu sistema)
+    await sendEmail({
+      to: user.email,
+      subject: 'Código de recuperación de contraseña',
+      html: resetPasswordEmail(user.name, code),
+    });
+
+    return res.status(200).json({
+      message: 'Código enviado por correo',
+      method: 'EMAIL',
+    });
+
+  } catch (error) {
+    console.error('Error en forgotPassword:', error);
+    return next(error);
+  }
+};
+
+// Validate reset password code
+export const verifyResetCode = async (req: Request, res: Response) => {
+  try {
+    const { email, code } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new AppError('Usuario no encontrado', 404);
+    }
+
+    if (user.isAuthenticatorEnabled) {
+      // Validación de código del autenticador
+      if (!user.authenticatorSecret) {
+        throw new AppError('No hay un secreto de autenticación configurado para este usuario', 400);
+      }
+      const isValid = speakeasy.totp.verify({
+        secret: user.authenticatorSecret,
+        encoding: 'base32',
+        token: code,
+        window: 1,
+      });
+
+      if (!isValid) {
+        throw new AppError('Código 2FA inválido', 400);
+      }
+
+    } else {
+      // Validación de código enviado por correo
+      if (
+        !user.recoveryCode ||
+        !user.recoveryCodeExpires ||
+        user.recoveryCode !== code ||
+        user.recoveryCodeExpires < new Date()
+      ) {
+        throw new AppError('Código de recuperación inválido o expirado', 400);
+      }
+    }
+
+    // Generar token temporal válido por 10 minutos
+    const tempToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET!,
+      { expiresIn: '10m' }
+    );
+
+    return res.status(200).json({
+      message: 'Código verificado correctamente',
+      tempToken,
+    });
+
+  } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    console.error('Error desconocido verificando código de recuperación:', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+// Reset Password
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { tempToken, newPassword } = req.body;
+
+    // Verificar token temporal
+    const decoded = jwt.verify(tempToken, process.env.JWT_SECRET!) as { userId: string };
+
+    if (!decoded?.userId) {
+      throw new AppError('Token inválido o expirado', 401);
+    }
+
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      throw new AppError('Usuario no encontrado', 404);
+    }
+
+    // Actualizar la contraseña
+    user.password = await hashPassword(newPassword);
+
+    // Limpiar recovery data
+    user.recoveryCode = undefined;
+    user.recoveryCodeExpires = undefined;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Contraseña actualizada correctamente',
+    });
+
+  } catch (error) {
+    console.error('Error en resetPassword:', error);
+    return next(error);
+  }
 };

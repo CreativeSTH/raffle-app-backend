@@ -15,6 +15,8 @@ export interface IUser {
   failed2FAAttempts: number;
   lockedUntil2FA?: Date | null;
   companyId?: Types.ObjectId;
+  recoveryCode?: string;
+  recoveryCodeExpires?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
