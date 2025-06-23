@@ -1,11 +1,15 @@
-import { Schema, model } from 'mongoose';
-import { IAuditLog } from '../interfaces/modelsInterfaces/Audit-log.interface';
+// src/models/auditLog.model.ts
+import { Schema, model, Document } from 'mongoose';
+import { IAuditLog } from '../interfaces/modelsInterfaces/IAuditLog';
 
-const auditLogSchema = new Schema<IAuditLog>({
+interface IAuditLogDocument extends IAuditLog, Document {}
+
+const auditLogSchema = new Schema<IAuditLogDocument>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   action: { type: String, required: true },
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
-  details: { type: String },
+  description: { type: String },
+  userAgent: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
-export default model<IAuditLog>('AuditLog', auditLogSchema);
+export const AuditLog = model<IAuditLogDocument>('AuditLog', auditLogSchema);

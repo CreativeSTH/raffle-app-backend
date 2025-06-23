@@ -2,10 +2,12 @@ import { Request, Response } from 'express';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import User from '../models/User';
-import { generateJWToken } from '../utils/helpers'
 import jwt from 'jsonwebtoken';
-import { sendEmail } from '../services/emailSender'
-import { googleAuthEnableEmail, googleAuthDisableEmail } from '../utils/emailTemplates'
+import { generateJWToken } from '../utils/helpers';
+import { sendEmail } from '../services/emailSender';
+import { googleAuthEnableEmail, googleAuthDisableEmail } from '../utils/emailTemplates';
+import { auditService } from '../services/audit.service';
+import { AuditAction } from '../constants/auditActions';
 
 // Generar secreto y código QR
 export const generateAuthenticatorSecret = async (req: Request, res: Response) => {
@@ -51,6 +53,14 @@ export const enableAuthenticator = async (req: Request, res: Response) => {
   const html = googleAuthEnableEmail(user.name);
   await sendEmail({ to: user.email, subject, html });
 
+  // 👇 Registro de auditoría
+  await auditService.logEvent(
+    req,
+    AuditAction.ENABLE_2FA,
+    `2FA Activado para el usuario ${user.email}`,
+    user._id.toString()
+  );
+
   res.json({ message: '2FA activado correctamente' });
 };
 
@@ -65,11 +75,19 @@ export const disableAuthenticator = async (req: Request, res: Response) => {
   const user = await User.findById(userId);
   if(user){
     //Enviar correo de confirmación
-    const subject = "2FA Activado Correctamente 🎯";
+    const subject = "2FA Desactivado Correctamente 🎯";
     const html = googleAuthDisableEmail(user.name);
     await sendEmail({ to: user.email, subject, html });
-  }
 
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.DISABLE_2FA,
+      `2FA desactivado para el usuario ${user.email}`,
+      user._id.toString()
+    );
+  }
+  
   res.json({ message: '2FA desactivado' });
 };
 
@@ -128,6 +146,14 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
 
     // Generar token JWT final
     const finalToken = generateJWToken(user._id.toString());
+
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.LOGIN,
+      `Inicio de sesión exitoso para el usuario ${user.email} usando 2FA`,
+      user._id.toString()
+    );
 
     return res.status(200).json({
       message: 'Login exitoso con 2FA',

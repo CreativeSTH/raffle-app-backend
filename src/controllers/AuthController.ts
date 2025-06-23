@@ -1,17 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import Wallet from '../models/Wallet';
 import Pocket from '../models/Pocket';
 import VerificationToken from '../models/VerificationToken';
 import Referral from '../models/Referral';
 import OtpModel from '../models/Otp';
+import speakeasy from 'speakeasy';
 import { sendEmail } from '../services/emailSender';
 import {getVerificationEmailHTML, getConfirmationRegisterEmailHTML, otpCodeEmailHTML, resetPasswordEmail} from '../utils/emailTemplates'
 import { generateReferralCode, generateToken, hashPassword, generateJWToken, comparePassword} from '../utils/helpers';
-import { generateOtp } from '../utils/generateOTP'
-import { AppError } from '../utils/AppError'
-import jwt from 'jsonwebtoken';
-import speakeasy from 'speakeasy'
+import { generateOtp } from '../utils/generateOTP';
+import { AppError } from '../utils/AppError';
+import { auditService } from '../services/audit.service';
+import { AuditAction } from '../constants/auditActions';
 import { validateRecaptcha } from '../utils/validateRecaptcha';
 
 
@@ -85,6 +87,14 @@ export const register = async (req: Request, res: Response) => {
     const html = getVerificationEmailHTML(token);
     await sendEmail({ to: email, subject, html });
 
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.REGISTER,
+      `Nuevo usuario registrado con el correo ${email}`,
+      newUser._id.toString()
+    );
+
     // 10. Responder al frontend
     res.status(201).json({ message: 'Usuario registrado. Verifica tu correo electrónico.' });
   } catch (error) {
@@ -133,6 +143,14 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     // 6. Eliminar el token
     await VerificationToken.deleteOne({ _id: record._id });
+
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.EMAIL_VERIFIED,
+      `Email verificado con el correo ${user.email}`,
+      user._id.toString()
+    );
 
     // 7. Responder éxito
     return res.status(200).json({
@@ -194,6 +212,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     // Si no tiene 2FA, login completo normal
     const token = generateJWToken(user._id.toString());
 
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.LOGIN,
+      `Inicio de sesión exitoso para el usuario ${user.email}`,
+      user._id.toString()
+    );
+
     return res.status(200).json({
       message: 'Login exitoso',
       token,
@@ -237,6 +263,15 @@ export const requestOtp = async (req: Request, res: Response, next: NextFunction
     const subject = "Código único de inicio de sesión 🎯";
     const html = otpCodeEmailHTML(otp);
     await sendEmail({to: user.email, subject, html,}); 
+
+     // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.OTP_LOGIN_REQUEST,
+      `Solicitud Login OTP para el usuario ${user.email}`,
+      user._id.toString()
+    );
+
     res.status(200).json({ message: 'OTP enviado al correo' });
   } catch (err) {
     next(err);
@@ -284,6 +319,21 @@ export const verifyOtpLogin = async (req: Request, res: Response) => {
   // 7. Eliminar el OTP ya que fue usado
   await OtpModel.deleteOne({ _id: otpEntry._id });
 
+  // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.OTP_LOGIN_VERIFIED,
+      `Solicitud OTP Verificada para el usuario ${user.email}`,
+      user._id.toString()
+    );
+  // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.LOGIN,
+      `Login exitoso mediante OTP para el usuario ${user.email}`,
+      user._id.toString()
+    );
+
   // 8. Responder al cliente
   return res.status(200).json({
     message: 'Inicio de sesión por OTP exitoso',
@@ -313,6 +363,15 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     // --- CASO: Tiene 2FA activo ---
     if (user.isAuthenticatorEnabled && user.authenticatorSecret) {
+    
+      // 👇 Registro de auditoría
+      await auditService.logEvent(
+        req,
+        AuditAction.PASSWORD_RESET_REQUEST,
+        `Solicitud de recuperación de contraseña por el usuario ${user.email}`,
+        user._id.toString()
+      );
+
       return res.status(200).json({
         message: '2FA habilitado. Verifica con Google Authenticator.',
         method: '2FA',
@@ -333,6 +392,14 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       subject: 'Código de recuperación de contraseña',
       html: resetPasswordEmail(user.name, code),
     });
+
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.PASSWORD_RESET_REQUEST,
+      `Solicitud de recuperación de contraseña por el usuario ${user.email}`,
+      user._id.toString()
+    );
 
     return res.status(200).json({
       message: 'Código enviado por correo',
@@ -430,6 +497,14 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     user.recoveryCodeExpires = undefined;
 
     await user.save();
+
+    // 👇 Registro de auditoría
+    await auditService.logEvent(
+      req,
+      AuditAction.PASSWORD_RESET_SUCCESS,
+      `Contraseña recuperada por el usuario ${user.email}`,
+      user._id.toString()
+    );
 
     return res.status(200).json({
       message: 'Contraseña actualizada correctamente',
