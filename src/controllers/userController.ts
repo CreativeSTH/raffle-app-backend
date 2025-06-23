@@ -3,6 +3,8 @@ import User from '../models/User';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { AppError } from '../utils/AppError';
 import { comparePassword, hashPassword } from '../utils/helpers'
+import { addToBlacklist } from "../services/blacklist.service";
+import { blacklistTokenSchema } from "../schemas/tokenBlacklist.schema";
 
 export const updateOtpPreference = async (req: AuthRequest, res: Response) => {
   try {
@@ -52,3 +54,24 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Token no enviado" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    // Validar con Zod
+    blacklistTokenSchema.parse({ token });
+
+    // Agregar a la blacklist
+    await addToBlacklist(token);
+
+    return res.status(200).json({ message: "Sesión cerrada correctamente" });
+  } catch (error) {
+    console.error("Error en logout:", error);
+    return res.status(500).json({ message: "Error al cerrar sesión" });
+  }
+};

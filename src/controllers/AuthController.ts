@@ -440,3 +440,4 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     return next(error);
   }
 };
+

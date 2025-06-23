@@ -1,6 +1,6 @@
 // src/routes/auth.routes.ts
 import { Router } from 'express';
-import { register, verifyEmail, login, requestOtp, verifyOtpLogin, forgotPassword, verifyResetCode, resetPassword  } from '../controllers/AuthController';
+import { register, verifyEmail, login, requestOtp, verifyOtpLogin, forgotPassword, verifyResetCode, resetPassword } from '../controllers/AuthController';
 import { authLimiter } from '../middlewares/rateLimiter';
 import { validateBody } from '../middlewares/validateBody';
 import { loginSchema, registerSchema, requestOtpSchema, verifyOtpLoginSchema, requestResetPasswordSchema, verifyResetPasswordCodeSchema, resetPassSchema } from '../schemas/auth.schema'

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { AppError } from '../utils/AppError';
+import { isTokenBlacklisted } from '../services/blacklist.service';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export interface AuthRequest extends Request {
   userId?: string;
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
@@ -21,6 +22,12 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     }
 
     const token = authHeader.split(' ')[1];
+    // ✅ Verificar si el token está en la blacklist
+    const blacklisted = await isTokenBlacklisted(token);
+    if (blacklisted) {
+      throw new AppError('Token has been revoked. Please log in again.', 401);
+    }
+
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new Error('JWT_SECRET not set');
 
