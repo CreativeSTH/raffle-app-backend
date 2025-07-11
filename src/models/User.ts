@@ -1,12 +1,13 @@
 import { Schema, model } from 'mongoose';
 import { IUser } from '../interfaces/modelsInterfaces/User.Interface';
+import { UserRole } from '../constants/userRoles';
 
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['user', 'admin', 'superadmin'], default: 'user' },
+    role: UserRole,
     //Referral 
     referralCode: { type: String, unique: true },
     referredBy: { type: String },
