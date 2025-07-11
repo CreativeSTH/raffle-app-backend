@@ -27,3 +27,9 @@ export const createLotterySchema = z.object({
 });
 
 export const updateLotterySchema = createLotterySchema.partial();
+
+export const idParamSchema = z.object({
+  id: z.string().length(24, 'ID inválido'),
+});
+
+export const bulkCreateLotterySchema = z.array(createLotterySchema);
