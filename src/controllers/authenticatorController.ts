@@ -145,7 +145,7 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
     await user.save();
 
     // Generar token JWT final
-    const finalToken = generateJWToken(user._id.toString());
+    const finalToken = generateJWToken(user._id.toString(), user.email, user.role);
 
     // 👇 Registro de auditoría
     await auditService.logEvent(

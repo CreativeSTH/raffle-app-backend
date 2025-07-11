@@ -5,6 +5,7 @@ export interface IAuditLog extends Document {
   action: string;
   details: string;
   description?: string;
+  ip: string;
   userAgent?: string;
   createdAt: Date;
 }

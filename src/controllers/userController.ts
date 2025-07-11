@@ -34,7 +34,7 @@ export const updateOtpPreference = async (req: AuthRequest, res: Response) => {
 };
 
 // src/controllers/UserController.ts
-export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const changePassword = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.userId;
     const { currentPassword, newPassword } = req.body;

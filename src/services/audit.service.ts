@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { AuditLog } from '../models/AuditLogs';
 import { AuditAction } from '../constants/auditActions';
+import requestIp from 'request-ip';
 
 class AuditService {
   async logEvent(
@@ -16,7 +17,8 @@ class AuditService {
       return;
     }
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ip = requestIp.getClientIp(req) || 'Unknown';
+
     const userAgent = req.headers['user-agent'] || 'Unknown';
 
     await AuditLog.create({

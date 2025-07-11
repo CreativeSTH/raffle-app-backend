@@ -210,7 +210,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     // Si no tiene 2FA, login completo normal
-    const token = generateJWToken(user._id.toString());
+    const token = generateJWToken(user._id.toString(), user.email, user.role);
 
     // 👇 Registro de auditoría
     await auditService.logEvent(
@@ -314,7 +314,7 @@ export const verifyOtpLogin = async (req: Request, res: Response) => {
   }
 
   // 6. Generar el token usando tu helper personalizado
-  const token = generateJWToken(user._id.toString());
+  const token = generateJWToken(user._id.toString(), user.email, user.role);
 
   // 7. Eliminar el OTP ya que fue usado
   await OtpModel.deleteOne({ _id: otpEntry._id });

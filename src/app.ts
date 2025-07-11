@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes'
 import authenticatorRoutes from './routes/authenticator.routes';
+import lotteryRoutes from './routes/lottery.routes'
 import { errorHandler } from './middlewares/errorHandler';
 
 
@@ -45,12 +46,14 @@ app.get('/', (req, res) => {
   res.send('🎉 ¡API de rifas funcionando correctamente!');
 });
 
-// Rutas
+// Ruta
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
 //-----Google Authenticator
 app.use('/api/authenticator', authenticatorRoutes);
+//-----Loterías
+app.use('/api/lotteries', lotteryRoutes);
 
 app.use(errorHandler);
 

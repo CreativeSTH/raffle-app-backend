@@ -1,378 +1,360 @@
-{
-    "status": "success",
-    "data": [
-        {
-            "ID":"",
-            "name": "ANTIOQUEÑITA MAÑANA",
-            "slug": "antioquenita-manana"
-        },
-        {
-            "name": "ANTIOQUEÑITA TARDE",
-            "slug": "antioquenita-tarde"
-        },
-        {
-            "name": "AST-LUN 21:50",
-            "slug": "ast-lun-2150"
-        },
-        {
-            "name": "AST-SOL 13:50",
-            "slug": "ast-sol-1350"
-        },
-        {
-            "name": "ASTRO LUNA",
-            "slug": "astro-luna"
-        },
-        {
-            "name": "ASTRO SOL",
-            "slug": "astro-sol"
-        },
-        {
-            "name": "BOGOTA",
-            "slug": "bogota"
-        },
-        {
-            "name": "BOYACA",
-            "slug": "boyaca"
-        },
-        {
-            "name": "CAFETERITO FESTIVO",
-            "slug": "cafeterito-festivo"
-        },
-        {
-            "name": "CAFETERITO NOCHE",
-            "slug": "cafeterito-noche"
-        },
-        {
-            "name": "CAFETERITO NOCHE  FESTIVO",
-            "slug": "cafeterito-noche-festivo"
-        },
-        {
-            "name": "CAFETERO",
-            "slug": "cafetero"
-        },
-        {
-            "name": "CAFETERO DIA",
-            "slug": "cafetero-dia"
-        },
-        {
-            "name": "CAFETERO NOCHE",
-            "slug": "cafetero-noche"
-        },
-        {
-            "name": "CAFETERO NOCHE FESTIVO",
-            "slug": "cafetero-noche-festivo"
-        },
-        {
-            "name": "CARIBEÃ‘A DIA",
-            "slug": "caribeaa-dia"
-        },
-        {
-            "name": "CARIBEÃ‘A FESTIVO DIA",
-            "slug": "caribeaa-festivo-dia"
-        },
-        {
-            "name": "CARIBEÃ‘A NOCHE",
-            "slug": "caribeaa-noche"
-        },
-        {
-            "name": "CARIBEÑA DIA",
-            "slug": "caribena-dia"
-        },
-        {
-            "name": "CARIBEÑA FESTIVA NOCHE",
-            "slug": "caribena-festiva-noche"
-        },
-        {
-            "name": "CARIBEÑA FESTIVO DIA",
-            "slug": "caribena-festivo-dia"
-        },
-        {
-            "name": "CARIBEÑA NOCHE",
-            "slug": "caribena-noche"
-        },
-        {
-            "name": "CARIBEÑA NOCHE FESTIVO",
-            "slug": "caribena-noche-festivo"
-        },
-        {
-            "name": "CAUCA",
-            "slug": "cauca"
-        },
-        {
-            "name": "CHONTICO",
-            "slug": "chontico"
-        },
-        {
-            "name": "CHONTICO DIA",
-            "slug": "chontico-dia"
-        },
-        {
-            "name": "CHONTICO FESTIVO",
-            "slug": "chontico-festivo"
-        },
-        {
-            "name": "CHONTICO FESTIVO DIA",
-            "slug": "chontico-festivo-dia"
-        },
-        {
-            "name": "CHONTICO NOCHE",
-            "slug": "chontico-noche"
-        },
-        {
-            "name": "CHONTICO NOCHE FESTIVO",
-            "slug": "chontico-noche-festivo"
-        },
-        {
-            "name": "CHONTICO NOCHE JUEVES",
-            "slug": "chontico-noche-jueves"
-        },
-        {
-            "name": "CRUZ ROJA",
-            "slug": "cruz-roja"
-        },
-        {
-            "name": "CULONA",
-            "slug": "culona"
-        },
-        {
-            "name": "CULONA DIA",
-            "slug": "culona-dia"
-        },
-        {
-            "name": "CULONA FESTIVO",
-            "slug": "culona-festivo"
-        },
-        {
-            "name": "CULONA FESTIVO DIA",
-            "slug": "culona-festivo-dia"
-        },
-        {
-            "name": "CULONA FESTIVO NOCHE",
-            "slug": "culona-festivo-noche"
-        },
-        {
-            "name": "CULONA NOCHE",
-            "slug": "culona-noche"
-        },
-        {
-            "name": "CULONA NOCHE FESTIVO",
-            "slug": "culona-noche-festivo"
-        },
-        {
-            "name": "CUNDINAMARCA",
-            "slug": "cundinamarca"
-        },
-        {
-            "name": "DORADO",
-            "slug": "dorado"
-        },
-        {
-            "name": "DORADO FESTIVO",
-            "slug": "dorado-festivo"
-        },
-        {
-            "name": "DORADO MAÑANA",
-            "slug": "dorado-manana"
-        },
-        {
-            "name": "DORADO NOCHE",
-            "slug": "dorado-noche"
-        },
-        {
-            "name": "DORADO NOCHE FESTIVO",
-            "slug": "dorado-noche-festivo"
-        },
-        {
-            "name": "DORADO TARDE",
-            "slug": "dorado-tarde"
-        },
-        {
-            "name": "EXTRA CRUZ ROJA",
-            "slug": "extra-cruz-roja"
-        },
-        {
-            "name": "EXTRA DE COLOMBIA",
-            "slug": "extra-de-colombia"
-        },
-        {
-            "name": "FANTASTICA DIA",
-            "slug": "fantastica-dia"
-        },
-        {
-            "name": "FANTASTICA NOCHE",
-            "slug": "fantastica-noche"
-        },
-        {
-            "name": "FANTASTICA NOCHE FESTIVO",
-            "slug": "fantastica-noche-festivo"
-        },
-        {
-            "name": "HUILA",
-            "slug": "huila"
-        },
-        {
-            "name": "LA FANTASTICA DIA",
-            "slug": "la-fantastica-dia"
-        },
-        {
-            "name": "LA FANTASTICA FESTIVO",
-            "slug": "la-fantastica-festivo"
-        },
-        {
-            "name": "LA FANTASTICA NOCHE",
-            "slug": "la-fantastica-noche"
-        },
-        {
-            "name": "LA FANTASTICA NOCHE  FESTIVO",
-            "slug": "la-fantastica-noche-festivo"
-        },
-        {
-            "name": "MANIZALES",
-            "slug": "manizales"
-        },
-        {
-            "name": "MEDELLIN",
-            "slug": "medellin"
-        },
-        {
-            "name": "META",
-            "slug": "meta"
-        },
-        {
-            "name": "MOTILON",
-            "slug": "motilon"
-        },
-        {
-            "name": "MOTILON FESTIVO",
-            "slug": "motilon-festivo"
-        },
-        {
-            "name": "MOTILON NOCHE",
-            "slug": "motilon-noche"
-        },
-        {
-            "name": "PAISITA 3 SABADOS",
-            "slug": "paisita-3-sabados"
-        },
-        {
-            "name": "PAISITA DIA",
-            "slug": "paisita-dia"
-        },
-        {
-            "name": "PAISITA FESTIVO",
-            "slug": "paisita-festivo"
-        },
-        {
-            "name": "PAISITA FESTIVO DIA",
-            "slug": "paisita-festivo-dia"
-        },
-        {
-            "name": "PAISITA FESTIVO NOCHE",
-            "slug": "paisita-festivo-noche"
-        },
-        {
-            "name": "PAISITA NOCHE",
-            "slug": "paisita-noche"
-        },
-        {
-            "name": "PAISITA NOCHE FESTIVO",
-            "slug": "paisita-noche-festivo"
-        },
-        {
-            "name": "PIJAO",
-            "slug": "pijao"
-        },
-        {
-            "name": "PIJAO FESTIVO",
-            "slug": "pijao-festivo"
-        },
-        {
-            "name": "PIJAO NOCHE FESTIVO",
-            "slug": "pijao-noche-festivo"
-        },
-        {
-            "name": "QUINDIO",
-            "slug": "quindio"
-        },
-        {
-            "name": "RISARALDA",
-            "slug": "risaralda"
-        },
-        {
-            "name": "SAMAN",
-            "slug": "saman"
-        },
-        {
-            "name": "SAMANFESTIVO",
-            "slug": "samanfestivo"
-        },
-        {
-            "name": "SANTANDER",
-            "slug": "santander"
-        },
-        {
-            "name": "SINUANO DIA",
-            "slug": "sinuano-dia"
-        },
-        {
-            "name": "SINUANO FESTIVO DIA",
-            "slug": "sinuano-festivo-dia"
-        },
-        {
-            "name": "SINUANO FESTIVO NOCHE",
-            "slug": "sinuano-festivo-noche"
-        },
-        {
-            "name": "SINUANO NOCHE",
-            "slug": "sinuano-noche"
-        },
-        {
-            "name": "SINUANO NOCHE FESTIVO",
-            "slug": "sinuano-noche-festivo"
-        },
-        {
-            "name": "SORTEO EXTRA CAUCA",
-            "slug": "sorteo-extra-cauca"
-        },
-        {
-            "name": "SORTEO EXTRA CRUZROJA-VALLE",
-            "slug": "sorteo-extra-cruzroja-valle"
-        },
-        {
-            "name": "SORTEO EXTRA DE BOGOTA",
-            "slug": "sorteo-extra-de-bogota"
-        },
-        {
-            "name": "SORTEO EXTRA DE BOYACA",
-            "slug": "sorteo-extra-de-boyaca"
-        },
-        {
-            "name": "SORTEO EXTRA DE MANIZALES",
-            "slug": "sorteo-extra-de-manizales"
-        },
-        {
-            "name": "SORTEO EXTRA DEL TOLIMA",
-            "slug": "sorteo-extra-del-tolima"
-        },
-        {
-            "name": "SORTEO EXTRA SANTANDER",
-            "slug": "sorteo-extra-santander"
-        },
-        {
-            "name": "SUPER EXTRA MEDELLIN",
-            "slug": "super-extra-medellin"
-        },
-        {
-            "name": "SUPER EXTRA NAVIDAD MEDELLIN",
-            "slug": "super-extra-navidad-medellin"
-        },
-        {
-            "name": "TOLIMA",
-            "slug": "tolima"
-        },
-        {
-            "name": "VALLE",
-            "slug": "valle"
-        }
-    ]
-}
+[
+
+    {
+        "name": "ANTIOQUEÑITA MAÑANA",
+        "slug": "antioquenita-manana",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "12:00", 
+        "ID":""
+    },
+    {
+        "name": "ANTIOQUEÑITA TARDE",
+        "slug": "antioquenita-tarde",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "18:00", 
+        "ID":""
+    },
+    {
+        "name": "ASTRO LUNA",
+        "slug": "astro-luna",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "ASTRO SOL",
+        "slug": "astro-sol",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "15:00", 
+        "ID":""
+    },
+    {
+        "name": "BOGOTA",
+        "slug": "bogota",
+        "gameDays": "JUE",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "BOYACA",
+        "slug": "boyaca",
+        "gameDays": "SAB",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "CAFETERITO DIA",
+        "slug": "cafeterito-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "12:00", 
+        "ID":""
+    },
+    {
+        "name": "CAFETERITO NOCHE",
+        "slug": "cafeterito-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "22:00", 
+        "ID":""
+    },
+    {
+        "name": "CAFETERO DIA",
+        "slug": "cafetero-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "12:00", 
+        "ID":""
+    },
+    {
+        "name": "CAFETERO NOCHE",
+        "slug": "cafetero-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "22:00", 
+        "ID":""
+    },
+    {
+        "name": "CARIBEÑA DIA",
+        "slug": "caribena-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "14:30", 
+        "ID":""
+    },
+    {
+        "name": "CARIBEÑA FESTIVO DIA",
+        "slug": "caribena-festivo-dia",
+        "gameDays": "DOM",
+        "gameTime": "14:30", 
+        "ID":""
+    },
+    {
+        "name": "CARIBEÑA NOCHE",
+        "slug": "caribena-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "CARIBEÑA NOCHE FESTIVO",
+        "slug": "caribena-noche-festivo",
+        "gameDays": "DOM",
+        "gameTime": "20:30", 
+        "ID":""
+    },
+    {
+        "name": "CAUCA",
+        "slug": "cauca",
+        "gameDays": "SAB",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "CHONTICO DIA",
+        "slug": "chontico-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "13:00", 
+        "ID":""
+    },
+    {
+        "name": "CHONTICO NOCHE",
+        "slug": "chontico-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "CRUZ ROJA",
+        "slug": "cruz-roja",
+        "gameDays": "MAR",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "CULONA DIA",
+        "slug": "culona-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "14:30", 
+        "ID":""
+    },
+    {
+        "name": "CULONA NOCHE",
+        "slug": "culona-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "21:30", 
+        "ID":""
+    },
+    {
+        "name": "CUNDINAMARCA",
+        "slug": "cundinamarca",
+        "gameDays": "LUN",
+        "gameTime": "22:30", 
+        "ID":""
+    },
+    {
+        "name": "DORADO MAÑANA",
+        "slug": "dorado-manana",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "11:00", 
+        "ID":""
+    },
+    {
+        "name": "DORADO TARDE",
+        "slug": "dorado-tarde",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "17:00", 
+        "ID":""
+    },
+    {
+        "name": "DORADO NOCHE",
+        "slug": "dorado-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "EXTRA CRUZ ROJA",
+        "slug": "extra-cruz-roja",
+        "gameDays": "EXTRA",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "EXTRA DE COLOMBIA",
+        "slug": "extra-de-colombia",
+        "gameDays": "EXTRA",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "FANTASTICA DIA",
+        "slug": "fantastica-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "13:30", 
+        "ID":""
+    },
+    {
+        "name": "FANTASTICA NOCHE",
+        "slug": "fantastica-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "21:00", 
+        "ID":""
+    },
+    {
+        "name": "HUILA",
+        "slug": "huila",
+        "gameDays": "MAR",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "LA FANTASTICA DIA",
+        "slug": "la-fantastica-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "13:30", 
+        "ID":""
+    },
+    {
+        "name": "LA FANTASTICA NOCHE",
+        "slug": "la-fantastica-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "21:00", 
+        "ID":""
+    },
+    {
+        "name": "MANIZALES",
+        "slug": "manizales",
+        "gameDays": "MIE",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "MEDELLIN",
+        "slug": "medellin",
+        "gameDays": "VIE",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "META",
+        "slug": "meta",
+        "gameDays": "MIE",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "MOTILON TARDE",
+        "slug": "motilon-tarde",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "15:30", 
+        "ID":""
+    },
+    {
+        "name": "MOTILON NOCHE",
+        "slug": "motilon-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "21:30", 
+        "ID":""
+    },
+    {
+        "name": "PAISITA 3 SABADOS",
+        "slug": "paisita-3-sabados",
+        "gameDays": "SAB",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "PAISITA DIA",
+        "slug": "paisita-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "14:00", 
+        "ID":""
+    },
+    {
+        "name": "PAISITA NOCHE",
+        "slug": "paisita-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "20:30", 
+        "ID":""
+    },
+    {
+        "name": "PIJAO",
+        "slug": "pijao",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "22:30", 
+        "ID":""
+    },
+    {
+        "name": "QUINDIO",
+        "slug": "quindio",
+        "gameDays": "JUE",
+        "gameTime": "22:30", 
+        "ID":""
+    },
+    {
+        "name": "RISARALDA",
+        "slug": "risaralda",
+        "gameDays": "VIE",
+        "gameTime": "22:30", 
+        "ID":""
+    },
+    {
+        "name": "SAMAN",
+        "slug": "saman",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "14:00", 
+        "ID":""
+    },
+    {
+        "name": "SAMANFESTIVO",
+        "slug": "samanfestivo",
+        "gameDays": "DOM",
+        "gameTime": "20:00", 
+        "ID":""
+    },
+    {
+        "name": "SANTANDER",
+        "slug": "santander",
+        "gameDays": "VIE",
+        "gameTime": "23:30", 
+        "ID":""
+    },
+    {
+        "name": "SINUANO DIA",
+        "slug": "sinuano-dia",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB, DOM",
+        "gameTime": "14:30", 
+        "ID":""
+    },
+    {
+        "name": "SINUANO NOCHE",
+        "slug": "sinuano-noche",
+        "gameDays": "LUN, MAR, MIE, JUE, VIE, SAB",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "SINUANO FESTIVO NOCHE",
+        "slug": "sinuano-festivo-noche",
+        "gameDays": "DOM",
+        "gameTime": "21:00", 
+        "ID":""
+    },
+    {
+        "name": "SINUANO NOCHE FESTIVO",
+        "slug": "sinuano-noche-festivo",
+        "gameDays": "DOM",
+        "gameTime": "21:00", 
+        "ID":""
+    },
+    {
+        "name": "TOLIMA",
+        "slug": "tolima",
+        "gameDays": "LUN",
+        "gameTime": "23:00", 
+        "ID":""
+    },
+    {
+        "name": "VALLE",
+        "slug": "valle",
+        "gameDays": "MIE",
+        "gameTime": "23:00", 
+        "ID":""
+    }
+]

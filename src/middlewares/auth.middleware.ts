@@ -3,15 +3,20 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { AppError } from '../utils/AppError';
 import { isTokenBlacklisted } from '../services/blacklist.service';
+import { UserRole } from '../constants/userRoles';
 
 dotenv.config();
 
 interface JwtPayload {
   id: string;
+  role: UserRole;
+  email?: string;
 }
 
 export interface AuthRequest extends Request {
   userId?: string;
+  role: UserRole;
+  email?: string;
 }
 
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -32,7 +37,11 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     if (!secret) throw new Error('JWT_SECRET not set');
 
     const payload = jwt.verify(token, secret) as JwtPayload;
-    req.userId = payload.id;
+    req.user = {
+      id: payload.id,
+      role: payload.role,
+      email: payload.email,
+    };
     next();
   } catch (err) {
     console.error('Auth error:', err);

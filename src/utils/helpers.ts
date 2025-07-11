@@ -2,6 +2,7 @@ import User from '../models/User';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret } from 'jsonwebtoken';
+import { UserRole } from '../constants/userRoles';
 
 
 // Genera un código de referido único
@@ -26,7 +27,7 @@ export const hashPassword = async (password: string, saltRounds = 10): Promise<s
   return await bcrypt.hash(password, saltRounds);
 };
 
-export const generateJWToken = (userId: string): string => {
+export const generateJWToken = (id: string, email: string, role: UserRole): string => {
   const secret: Secret = process.env.JWT_SECRET as Secret;
 
   if (!secret) {
@@ -34,13 +35,13 @@ export const generateJWToken = (userId: string): string => {
   }
 
   return jwt.sign(
-    { id: userId },
+    { id, email, role },
     secret,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '1d',
     }
   );
-}; 
+};
 
 export const comparePassword = async (password:string, userPassword:string) => {
   return await bcrypt.compare(password, userPassword!);

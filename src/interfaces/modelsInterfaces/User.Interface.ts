@@ -1,11 +1,12 @@
 import { Types } from 'mongoose';
+import { UserRole } from '../../constants/userRoles';
 
 export interface IUser {
   _id?: Types.ObjectId;
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin' | 'superadmin';
+  role: UserRole;
   referralCode: string;
   referredBy?: string;
   isEmailVerified: boolean;
